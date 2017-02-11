@@ -1,6 +1,6 @@
 # Site settings
-title: Gitkong
-SEOTitle: gitkong的博客 | Gitkong
+title: gitKong
+SEOTitle: gitKong的博客 | gitKong
 header-img: img/post-bg-rwd.jpg
 email: gitKong@163.com
 description: "只做对的，不做多余的"
@@ -22,7 +22,7 @@ RSS: false
 #zhihu_username:     qiubaiying
 github_username:    gitkong
 #facebook_username:  baiying.qiu.7
-jianshu_username:   gitkong
+jianshu_username:   gitKong
 #twitter_username:   qiubaiying
 
 
@@ -58,9 +58,9 @@ kramdown:
 #disqus_username: _your_disqus_short_name_
 
 # Duoshuo settings
-duoshuo_username: qiubaiying
+#duoshuo_username: qiubaiying
 # Share component is depend on Comment so we can NOT use share only.
-duoshuo_share: true                     # set to false if you want to use Comment without Sharing
+#duoshuo_share: true                     # set to false if you want to use Comment without Sharing
 
 
 
