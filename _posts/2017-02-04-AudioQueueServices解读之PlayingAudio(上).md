@@ -86,6 +86,7 @@ bool                          mIsRunning;                     // 10
 - 10、表示音频队列是否正在运行
 
 ---
+
 # 二、 Write a Playback Audio Queue Callback
 
 下一步就是写一个音频队列 Audio queue 的回调函数，这个函数做了三件事：
@@ -187,6 +188,7 @@ pAqData->mIsRunning = false;                // 5
 - 5、重置音频队列状态不是正在运行
 
 ### (5)、A Full Playback Audio Queue Callback（完整的回调函数）
+
 ```
 static void HandleOutputBuffer (
 void                *aqData,
@@ -238,6 +240,7 @@ pAqData->mIsRunning = false;
 - 7、根据读取的数据包数量增加数据包索引。
 
 ---
+
 # 三、Write a Function to Derive Playback Audio Queue Buffer Size（编写一个函数去获取播放音频队列缓冲区的大小）
 
 Audio Queue Services 希望你在应用里面给你的音频队列缓冲区指定大小，下面提供的代码可以导出足够大的缓冲器大小以容纳给定持续时间的音频数据。
@@ -287,6 +290,7 @@ if (*outBufferSize < minBufferSize)
 *outNumPacketsToRead = *outBufferSize / maxPacketSize;           // 12
 }
 ```
+
 代码介绍：
 
 - 1、音频队列的AudioStreamBasicDescription结构。
@@ -303,6 +307,7 @@ if (*outBufferSize < minBufferSize)
 - 12、计算在每次调用回调时从音频文件读取的数据包数。
 
 ---
+
 # 四、Open an Audio File for Playback（打开音频文件播放）
 
 现在播放音频文件只需要下面三个步骤：
@@ -336,6 +341,7 @@ false                                           // 5
 
 
 **还有一种方法，我觉得是比较常用的，在我demo就使用这个，这个是通过传入一个NSString 路径实现的**
+
 ```
 CFStringRef strRef = (__bridge CFStringRef)filePath;
 // CFURLPathStyle 不建议使用kCFURLHFSPathStyle。 使用HFS样式路径的Carbon文件管理器已被弃用。 HFS样式路径不可靠，因为它们可以随意引用多个卷（如果这些卷具有相同的卷名称）。 您应该尽可能使用kCFURLPOSIXPathStyle。
@@ -401,8 +407,11 @@ kAudioFilePropertyDataFormat,                       // 4
 - 6、在输出时，完整的音频数据格式，以`AudioStreamBasicDescription`结构体的形式，从音频文件获得。 此行通过将文件的音频数据格式存储在音频队列的自定义结构中来将其应用于音频队列。
 
 ---
+
 #### 下篇将介绍 创建音频播放队列并实现播放，会附上Demo，前往：[Audio Queue Services 解读之 Playing Audio(下)](http://www.jianshu.com/p/5d1f466afab1)
+
 ---
+
 #### **欢迎大家关注我，喜欢就点个like和star，你的支持将是我的动力~**
 
 >翻译过来的可能有出入，如果大家发现有什么问题或者写错的，欢迎留言，谢谢
