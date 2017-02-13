@@ -10,12 +10,14 @@ tags:
     - 生活
 ---
 
+[Audio Queue Services 解读之 Playing Audio(上)(简书地址)](http://www.jianshu.com/p/d2ef4d15356c)
+
 前言：
 
 - 一直想研究一下Audio Queue Services，趁着过年这段时间有空就去研究一下，首选肯定是[官方文档](https://developer.apple.com/library/content/documentation/MusicAudio/Conceptual/AudioQueueProgrammingGuide/AQPlayback/PlayingAudio.html#//apple_ref/doc/uid/TP40005343-CH3-SW15),下面是我读文档的时候翻译过来，自己一句一句翻译可以加深自己的理解记忆，同时又能方便大家，何乐而不为！
 - 由于文档内容较多，本文会分两篇介绍，避免篇幅过长，影响阅读,Demo会迟点分享，敬请期待。
 
-[Audio Queue Services 解读之 Playing Audio(下)](http://www.jianshu.com/p/5d1f466afab1)
+[Audio Queue Services 解读之 Playing Audio(下)(简书地址)](http://www.jianshu.com/p/5d1f466afab1)
 
 # Playing Audio
 
@@ -67,6 +69,7 @@ bool                          mIsRunning;                     // 10
 - 1、设置audio queue buffers 音频缓存数，三个是最好的，可参考[Audio Queue Buffers](https://developer.apple.com/library/content/documentation/MusicAudio/Conceptual/AudioQueueProgrammingGuide/AboutAudioQueues/AboutAudioQueues.html#//apple_ref/doc/uid/TP40005343-CH5-SW13).
 
 - 2、`AudioStreamBasicDescription `（在`CoreAudioTypes.h`） 代表正在播放的音频数据格式；`mDataFormat`字段通过查询音频文件的`kAudioFilePropertyDataFormat`属性来填充，如[Obtaining a File’s Audio Data Format](https://developer.apple.com/library/content/documentation/MusicAudio/Conceptual/AudioQueueProgrammingGuide/AQPlayback/PlayingAudio.html#//apple_ref/doc/uid/TP40005343-CH3-SW25)中所述。
+
 有关`AudioStreamBasicDescription`结构的详细信息，请参阅*[Core Audio Data Types Reference](https://developer.apple.com/reference/coreaudio/1613060-core_audio_data_types)*
 
 - 3、你应用创建的播放音频队列对象
@@ -319,6 +322,7 @@ if (*outBufferSize < minBufferSize)
 ### (1)、Obtaining a CFURL Object for an Audio File（获取播放文件的CFURL对象）
 
 通过下面代码获取：
+
 ```
 CFURLRef audioFileURL =
 CFURLCreateFromFileSystemRepresentation (           // 1
@@ -408,11 +412,11 @@ kAudioFilePropertyDataFormat,                       // 4
 
 ---
 
-#### 下篇将介绍 创建音频播放队列并实现播放，会附上Demo，前往：[Audio Queue Services 解读之 Playing Audio(下)](http://www.jianshu.com/p/5d1f466afab1)
+#### 下篇将介绍 创建音频播放队列并实现播放，会附上Demo，前往：[Audio Queue Services 解读之 Playing Audio(下)(简书地址)](http://www.jianshu.com/p/5d1f466afab1)
 
 ---
 
 #### **欢迎大家关注我，喜欢就点个like和star，你的支持将是我的动力~**
 
->翻译过来的可能有出入，如果大家发现有什么问题或者写错的，欢迎留言，谢谢
+>翻译过来的可能有出入，如果大家发现有什么问题或者写错的，欢迎去简书留言，谢谢
 
