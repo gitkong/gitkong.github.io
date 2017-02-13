@@ -4,7 +4,7 @@ title:      Audio Queue Services 解读之 Playing Audio(上)
 subtitle:    "Audio Queue Services 官方文档翻译"
 date:       2017-02-13
 author:     gitKong
-header-img: img/post-bg-2015.jpg
+header-img: img/post-bg-apple-event-2015.jpg
 catalog: true
 tags:
     - 生活
