@@ -4,15 +4,17 @@ title:      Audio Queue Services 解读之 Playing Audio(下)
 subtitle:    "Audio Queue Services 官方文档翻译"
 date:       2017-02-13
 author:     gitKong
-header-img: img/post-bg-2015.jpg
+header-img: img/post-bg-apple-event-2015.jpg
 catalog: true
 tags:
     - 生活
 ---
 
+[Audio Queue Services 解读之 Playing Audio(下)(简书地址)](http://www.jianshu.com/p/5d1f466afab1)
+
 **解读Play Audio下集，如果你没看上集，建议先去看看上集.**
 
-[Audio Queue Services 解读之 Playing Audio(上)](http://www.jianshu.com/p/d2ef4d15356c)
+[Audio Queue Services 解读之 Playing Audio(上)(简书地址)](http://www.jianshu.com/p/d2ef4d15356c)
 
 >**上集已经准备好音频队列的结构体以及回调函数，那么接下来就可以创建音频队列并实现播放了！**
 
