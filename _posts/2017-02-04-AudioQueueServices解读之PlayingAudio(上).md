@@ -11,12 +11,13 @@ tags:
 ---
 
 前言：
+
 - 一直想研究一下Audio Queue Services，趁着过年这段时间有空就去研究一下，首选肯定是[官方文档](https://developer.apple.com/library/content/documentation/MusicAudio/Conceptual/AudioQueueProgrammingGuide/AQPlayback/PlayingAudio.html#//apple_ref/doc/uid/TP40005343-CH3-SW15),下面是我读文档的时候翻译过来，自己一句一句翻译可以加深自己的理解记忆，同时又能方便大家，何乐而不为！
 - 由于文档内容较多，本文会分两篇介绍，避免篇幅过长，影响阅读,Demo会迟点分享，敬请期待。
 
 [Audio Queue Services 解读之 Playing Audio(下)](http://www.jianshu.com/p/5d1f466afab1)
 
-#Playing Audio
+# Playing Audio
 
 当你使用 Audio Queue Services 播放音频的时候，音频源可以是任何东西-磁盘文件、基于软件的音频合成、内存中的音频对象等等，这节介绍的是播放磁盘文件
 
@@ -39,9 +40,11 @@ tags:
 - **7、处理音频队列， 释放资源。**
 
 ---
-#一、Define a Custom Structure to Manage State
+
+# 一、Define a Custom Structure to Manage State
 
 开始之前，先定义一个自定义的结构体，用来管理你的音频样式和音频队列状态信息，例如：
+
 ```
 static const int kNumberBuffers = 3;                              // 1
 struct AQPlayerState {
@@ -56,9 +59,11 @@ AudioStreamPacketDescription  *mPacketDescs;                  // 9
 bool                          mIsRunning;                     // 10
 };
 ```
+
 此结构中的大多数字段与用于记录的自定义结构中的字段相同（或接近），如定义管理状态的[Define a Custom Structure to Manage State](https://developer.apple.com/library/content/documentation/MusicAudio/Conceptual/AudioQueueProgrammingGuide/AQRecord/RecordingAudio.html#//apple_ref/doc/uid/TP40005343-CH4-SW15)中的录音音频章节所述。 例如，`mDataFormat`字段在此用于保存正在播放的文件的格式。 当记录时，类似字段保存正在写入磁盘的文件的格式。
 
 下面介绍一下结构体中的字段：
+
 - 1、设置audio queue buffers 音频缓存数，三个是最好的，可参考[Audio Queue Buffers](https://developer.apple.com/library/content/documentation/MusicAudio/Conceptual/AudioQueueProgrammingGuide/AboutAudioQueues/AboutAudioQueues.html#//apple_ref/doc/uid/TP40005343-CH5-SW13).
 
 - 2、`AudioStreamBasicDescription `（在`CoreAudioTypes.h`） 代表正在播放的音频数据格式；`mDataFormat`字段通过查询音频文件的`kAudioFilePropertyDataFormat`属性来填充，如[Obtaining a File’s Audio Data Format](https://developer.apple.com/library/content/documentation/MusicAudio/Conceptual/AudioQueueProgrammingGuide/AQPlayback/PlayingAudio.html#//apple_ref/doc/uid/TP40005343-CH3-SW25)中所述。
@@ -81,17 +86,19 @@ bool                          mIsRunning;                     // 10
 - 10、表示音频队列是否正在运行
 
 ---
-#二、 Write a Playback Audio Queue Callback
+# 二、 Write a Playback Audio Queue Callback
 
 下一步就是写一个音频队列 Audio queue 的回调函数，这个函数做了三件事：
+
 - 1、从音频文件读取指定数量的数据，并将其放入音频队列缓冲区。
 - 2、将音频队列缓冲区 buffers 加入缓冲区队列 audio queue 中。
 - 3、当没有更多的数据要从音频文件读取时，告诉音频队列停止。
 
 此部分显示回调声明示例，分别描述每个任务，最后呈现整个回放回调。 有关回放回调的作用的说明，可以参考下图。
+
 ![图](https://developer.apple.com/library/content/documentation/MusicAudio/Conceptual/AudioQueueProgrammingGuide/Art/playback_callback_function_2x.png)
 
-###(1)、The Playback Audio Queue Callback Declaration
+### (1)、The Playback Audio Queue Callback Declaration
 
 下面展示的 音频队列 播放回调实例声明，在`AudioQueue.h`头文件中声明为`AudioQueueOutputCallback`
 
@@ -104,11 +111,12 @@ AudioQueueBufferRef  inBuffer                 // 3
 ```
 
 介绍一下方法参数：
+
 - 1、通常，`aqData ` 是是包含音频队列的状态信息的自定义结构（就上面定义的结构体），看 [Define a Custom Structure to Manage State](https://developer.apple.com/library/content/documentation/MusicAudio/Conceptual/AudioQueueProgrammingGuide/AQPlayback/PlayingAudio.html#//apple_ref/doc/uid/TP40005343-CH3-SW15) 所述。
 - 2、管理这个回调的音频队列
 - 3、一个音频队列缓冲区，回调将通过从音频文件读取来填充数据。
 
-###(2)、Reading From a File into an Audio Queue Buffer（从文件中读取到音频队列缓冲区）
+### (2)、Reading From a File into an Audio Queue Buffer（从文件中读取到音频队列缓冲区）
 
 回放音频队列回调的第一个动作是从音频文件读取数据并将其放置在音频队列缓冲器中。看下面代码：
 
@@ -125,6 +133,7 @@ inBuffer->mAudioData                      // 8
 ```
 
 参数说明：
+
 - 1、`AudioFileReadPackets ` 函数声明在 `AudioFile.h` 头文件中，从音频文件中读取数据并放置到音频队列缓冲区中 
 - 2、要读取的音频文件
 - 3、当读取的时候，用 `false` 来表示函数不缓存数据
@@ -134,7 +143,7 @@ inBuffer->mAudioData                      // 8
 - 7、输入时，从音频文件读取的数据包数。 输出时，实际读取的数据包数
 - 8、输出时，填充的音频队列缓冲器包含从音频文件读取的数据
 
-###(3)、Enqueuing an Audio Queue Buffer (将音频队列缓冲区 buffers 加入缓冲区队列 audio queue 中)
+### (3)、Enqueuing an Audio Queue Buffer (将音频队列缓冲区 buffers 加入缓冲区队列 audio queue 中)
 
 现在，已经从音频文件读取数据并将其放入音频队列缓冲区中，回调将缓冲区排入队列，如下面代码所示。 一旦进入缓冲器队列，缓冲器中的音频数据就可供音频队列发送到输出设备
 
@@ -148,13 +157,14 @@ pAqData->mPacketDescs                      // 5
 ```
 
 下面介绍一下参数：
+
 - 1、`AudioQueueEnqueueBuffer` 函数将音频队列缓冲区添加到缓冲区队列。
 - 2、管理缓冲区队列的音频队列
 - 3、要入队的音频队列缓冲区buffers
 - 4、音频队列缓冲区数据中表示的数据包数， 对于不使用数据包描述的CBR数据，使用0
 - 5、对于使用数据包描述的压缩音频数据格式，缓冲区中数据包的数据包描述
 
-###(4)、Stopping an Audio Queue（停止音频队列）
+### (4)、Stopping an Audio Queue（停止音频队列）
 
 回调函数的最后一件事是检查是否没有更多的数据要从你正在播放的音频文件中读取。 一旦发现文件的结尾，回调就要告诉播放音频队列停止，看如下代码处理：
 
@@ -169,13 +179,14 @@ pAqData->mIsRunning = false;                // 5
 ```
 
 介绍一下代码：
+
 - 1、通过使用函数 `AudioFileReadPackets` 检查是否有数据包读取（由回调早先调用）
 - 2、使用 `AudioQueueStop ` 函数停止音频队列
 - 3、要停止的音频队列
 - 4、是否马上停止，false的话就当所有排队缓冲区都已播放时，异步停止音频队列。
 - 5、重置音频队列状态不是正在运行
 
-###(5)、A Full Playback Audio Queue Callback（完整的回调函数）
+### (5)、A Full Playback Audio Queue Callback（完整的回调函数）
 ```
 static void HandleOutputBuffer (
 void                *aqData,
@@ -217,6 +228,7 @@ pAqData->mIsRunning = false;
 ```
 
 部分代码介绍：
+
 - 1、在实例化时提供给音频队列的定制数据，包括表示要播放的文件的音频文件对象（AudioFileID类型）以及各种状态数据。 请参阅[Define a Custom Structure to Manage State](https://developer.apple.com/library/content/documentation/MusicAudio/Conceptual/AudioQueueProgrammingGuide/AQPlayback/PlayingAudio.html#//apple_ref/doc/uid/TP40005343-CH3-SW15)。
 - 2、如果音频队列停止，则立即返回。
 - 3、保存从正在播放的文件中读取的音频数据的字节数的变量。
@@ -226,7 +238,7 @@ pAqData->mIsRunning = false;
 - 7、根据读取的数据包数量增加数据包索引。
 
 ---
-#三、Write a Function to Derive Playback Audio Queue Buffer Size（编写一个函数去获取播放音频队列缓冲区的大小）
+# 三、Write a Function to Derive Playback Audio Queue Buffer Size（编写一个函数去获取播放音频队列缓冲区的大小）
 
 Audio Queue Services 希望你在应用里面给你的音频队列缓冲区指定大小，下面提供的代码可以导出足够大的缓冲器大小以容纳给定持续时间的音频数据。
 
@@ -276,6 +288,7 @@ if (*outBufferSize < minBufferSize)
 }
 ```
 代码介绍：
+
 - 1、音频队列的AudioStreamBasicDescription结构。
 - 2、播放的音频文件中数据的估计最大包大小。可以通过调用属性ID为 `kAudioFilePropertyPacketSizeUpperBound` 的 `AudioFileGetProperty` 函数（在 `AudioFile.h` 头文件中声明）来确定此值。请参阅[Set Sizes for a Playback Audio Queue](https://developer.apple.com/library/content/documentation/MusicAudio/Conceptual/AudioQueueProgrammingGuide/AQPlayback/PlayingAudio.html#//apple_ref/doc/uid/TP40005343-CH3-SW9)。
 - 3、为每个音频队列缓冲区指定的大小（以秒为单位）。
@@ -290,14 +303,15 @@ if (*outBufferSize < minBufferSize)
 - 12、计算在每次调用回调时从音频文件读取的数据包数。
 
 ---
-#四、Open an Audio File for Playback（打开音频文件播放）
+# 四、Open an Audio File for Playback（打开音频文件播放）
 
 现在播放音频文件只需要下面三个步骤：
+
 - 1、获取表示要播放的音频文件的 `CFURL` 对象
 - 2、打开文件
 - 3、获取文件的音频数据格式
 
-###(1)、Obtaining a CFURL Object for an Audio File（获取播放文件的CFURL对象）
+### (1)、Obtaining a CFURL Object for an Audio File（获取播放文件的CFURL对象）
 
 通过下面代码获取：
 ```
@@ -313,6 +327,7 @@ false                                           // 5
 
 
 代码介绍：
+
 - 1、在 `CFURL.h` 头文件中声明的 `CFURLCreateFromFileSystemRepresentation` 函数创建一个表示要播放的文件的CFURL对象。
 - 2、使用 `NULL`（或 `kCFAllocatorDefault`）来使用当前的默认内存分配器。
 - 3、要转换为CFURL对象的文件系统路径。 在生产代码中，通常从用户获取filePath的值。
@@ -335,7 +350,7 @@ YES
 - 其中CFURLPathStyle 不建议使用kCFURLHFSPathStyle。 使用HFS样式路径的Carbon文件管理器已被弃用。 HFS样式路径不可靠，因为它们可以随意引用多个卷（如果这些卷具有相同的卷名称）。 官方建议应该尽可能使用这个
 
 
-###(2)、Opening an Audio File（打开音频文件）
+### (2)、Opening an Audio File（打开音频文件）
 
 下面示例演示怎么去打开一个音频文件去播放
 
@@ -354,6 +369,7 @@ CFRelease (audioFileURL);
 ```
 
 代码解释：
+
 - 1、创建一个 `AQPlayerState ` 自定义结构体实例（可查看 [Define a Custom Structure to Manage State](https://developer.apple.com/library/content/documentation/MusicAudio/Conceptual/AudioQueueProgrammingGuide/AQPlayback/PlayingAudio.html#//apple_ref/doc/uid/TP40005343-CH3-SW15)），当你打开一个音频文件播放的时候，这个实例可以控制正在播放的音频文件（类型是 `AudioFileID `）
 - 2、`AudioFileOpenURL ` 函数声明在 `AudioFile.h  ` 头文件，打开一个你想播放的音频文件
 - 3、`CFURLRef` 播放引用url
@@ -385,9 +401,9 @@ kAudioFilePropertyDataFormat,                       // 4
 - 6、在输出时，完整的音频数据格式，以`AudioStreamBasicDescription`结构体的形式，从音频文件获得。 此行通过将文件的音频数据格式存储在音频队列的自定义结构中来将其应用于音频队列。
 
 ---
-####下篇将介绍 创建音频播放队列并实现播放，会附上Demo，前往：[Audio Queue Services 解读之 Playing Audio(下)](http://www.jianshu.com/p/5d1f466afab1)
+#### 下篇将介绍 创建音频播放队列并实现播放，会附上Demo，前往：[Audio Queue Services 解读之 Playing Audio(下)](http://www.jianshu.com/p/5d1f466afab1)
 ---
-####**欢迎大家关注我，喜欢就点个like和star，你的支持将是我的动力~**
+#### **欢迎大家关注我，喜欢就点个like和star，你的支持将是我的动力~**
 
 >翻译过来的可能有出入，如果大家发现有什么问题或者写错的，欢迎留言，谢谢
 
