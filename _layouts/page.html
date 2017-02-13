@@ -89,12 +89,12 @@ layout: default
                 </section>
                 {% endif %} -->
 
-                <!-- Short About -->
+                <!-- Short About 头像经常出现路径不一样，因此头像写死地址 modify by gitKong-->
                 <section class="visible-md visible-lg">
                     <hr><h5><a href="{{'/about/' | prepend: site.baseurl }}">ABOUT ME.关于我</a></h5>
                     <div class="short-about">
                         {% if site.sidebar-avatar %}
-                            <img src="{{site.sidebar-avatar}}" />
+                            <img src="https://gitkong.github.io/img/avatar_by.JPG" />
                         {% endif %}
                         {% if site.sidebar-about-description %}
                             <p>{{site.sidebar-about-description}}</p>
