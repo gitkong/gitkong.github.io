@@ -17,7 +17,7 @@ tags:
 ![这些宏，你知道吗？](http://upload-images.jianshu.io/upload_images/1085031-d4c3cabea30c186a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 
-其实这些宏，大部分都在`NSObjCRuntime.h`中，下面听我细细分析，当然，文章篇幅过长，如果你有精力有恒心一口气看完，给你个赞；更多的，本文可做参考文档，用作查询，已同步到 [个人博客](https://gitkong.github.io/)
+其实这些宏，大部分都在`NSObjCRuntime.h`中，下面听我细细分析，当然，文章篇幅过长，如果你有精力有恒心一口气看完，给你个赞；更多的，本文可做参考文档，用作查询，已同步到 [简书](http://www.jianshu.com/p/d0cd6b13fd4b)，可以去关注我喔~
 
 ---
 
@@ -634,7 +634,7 @@ NS_ROOT_CLASS
 
 ![编译失败，需要添加父类](http://upload-images.jianshu.io/upload_images/1085031-cd5d140a88b8cdc4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-#### 拓展：
+拓展：
 ```
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wobjc-root-class"
